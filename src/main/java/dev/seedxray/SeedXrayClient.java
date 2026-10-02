@@ -11,6 +11,7 @@ import dev.seedxray.seed.SeedFinder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -46,6 +47,11 @@ public class SeedXrayClient implements ClientModInitializer {
 			}
 			Esp.controller.tick(client);
 		});
+		// The server puts the hashed seed in its join/respawn packets; the client keeps it as the world's biome seed.
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+			if (client.world != null) SeedFinder.onJoin(client, client.world.getBiomeAccess().seed);
+		});
+		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> SeedFinder.onJoin(client, world.getBiomeAccess().seed));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			SeedFinder.onDisconnect();
 			Esp.controller.clear();

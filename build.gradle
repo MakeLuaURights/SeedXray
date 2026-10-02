@@ -20,6 +20,9 @@ loom {
 			if (project.hasProperty('quickPlay')) {
 				programArgs '--quickPlayMultiplayer', project.property('quickPlay')
 			}
+			if (project.hasProperty('quickPlaySingle')) {
+				programArgs '--quickPlaySingleplayer', project.property('quickPlaySingle')
+			}
 			programArgs '--username', 'SeedXrayDev'
 		}
 	}

@@ -1,7 +1,9 @@
 package dev.seedxray.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.platform.DepthTestFunction;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.seedxray.SeedXray;
 import dev.seedxray.config.SxConfig;
 import dev.seedxray.core.BoxList;
@@ -19,6 +21,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderSetup;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.fog.FogRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
@@ -71,13 +74,25 @@ public final class EspRenderer {
 		VertexConsumerProvider consumers = context.consumers();
 		Vector3f forward = context.worldState().cameraRenderState.orientation.transform(new Vector3f(0, 0, -1));
 
-		// The provider keeps one open buffer at a time, so every layer is written in one go: faces first, lines on top.
-		if (cfg.drawFill()) {
-			VertexConsumer fill = consumers.getBuffer(FILL);
-			draw(fill, true, entry, cam, forward, boxes, structures ? snapshot : null, cfg);
+		// Fog would fade distant highlights into the scenery, so the layers are flushed right away with fog switched off.
+		// (The provider keeps one open buffer at a time, so each layer is written in one go: faces first, lines on top.)
+		VertexConsumerProvider.Immediate immediate = consumers instanceof VertexConsumerProvider.Immediate i ? i : null;
+		GpuBufferSlice previousFog = RenderSystem.getShaderFog();
+		if (immediate != null) {
+			RenderSystem.setShaderFog(client.gameRenderer.fogRenderer.getFogBuffer(FogRenderer.FogType.NONE));
 		}
-		VertexConsumer lines = consumers.getBuffer(LINES);
-		draw(lines, false, entry, cam, forward, boxes, structures ? snapshot : null, cfg);
+		try {
+			if (cfg.drawFill()) {
+				VertexConsumer fill = consumers.getBuffer(FILL);
+				draw(fill, true, entry, cam, forward, boxes, structures ? snapshot : null, cfg);
+				if (immediate != null) immediate.draw(FILL);
+			}
+			VertexConsumer lines = consumers.getBuffer(LINES);
+			draw(lines, false, entry, cam, forward, boxes, structures ? snapshot : null, cfg);
+			if (immediate != null) immediate.draw(LINES);
+		} finally {
+			if (immediate != null) RenderSystem.setShaderFog(previousFog);
+		}
 	}
 
 	/** One pass over everything to draw: either only the translucent faces or only the lines. */

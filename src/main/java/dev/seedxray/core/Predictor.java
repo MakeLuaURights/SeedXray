@@ -223,7 +223,7 @@ public final class Predictor {
 				c.locator.detail(h);
 				if (h.detail() != null && h.detail().elytra() != null) {
 					BlockPos p = h.detail().elytra();
-					markers.add(new Marker(StructureCatalog.END_SHIP_ELYTRA, p, new net.minecraft.util.math.BlockBox(p.getX(), p.getY(), p.getZ(), p.getX(), p.getY(), p.getZ())));
+					markers.add(new Marker(StructureCatalog.END_SHIP_ELYTRA, p, new net.minecraft.util.math.BlockBox(p.getX() - 1, p.getY() - 1, p.getZ() - 1, p.getX() + 1, p.getY() + 1, p.getZ() + 1)));
 				}
 			}
 		}

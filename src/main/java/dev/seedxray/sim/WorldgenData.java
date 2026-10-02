@@ -72,18 +72,23 @@ public final class WorldgenData {
 		for (Registry.PendingTagLoad<?> load : TagGroupLoader.startReload(resources, dynamic)) {
 			load.apply();
 		}
-		StructureTemplateManager templates = new StructureTemplateManager(resources, createTempSession(), Schemas.getFixer(), Registries.BLOCK);
+		StructureTemplateManager templates = createTemplateManager(resources);
 		LOGGER.info("[SeedXray] Loaded vanilla worldgen data in {} ms", System.currentTimeMillis() - start);
 		return new WorldgenData(dynamic, templates);
 	}
 
-	private static LevelStorage.Session createTempSession() throws IOException {
+	/**
+	 * The manager only remembers a path of the session (where generated structures would be saved), so the session
+	 * is opened and closed right away and its temporary folder removed.
+	 */
+	private static StructureTemplateManager createTemplateManager(LifecycledResourceManager resources) throws IOException {
 		Path dir = Files.createTempDirectory("seedxray");
-		dir.toFile().deleteOnExit();
-		try {
-			return LevelStorage.create(dir).createSessionWithoutSymlinkCheck("tmp");
-		} catch (Exception e) {
-			throw new IOException(e);
+		try (LevelStorage.Session session = LevelStorage.create(dir).createSessionWithoutSymlinkCheck("tmp")) {
+			return new StructureTemplateManager(resources, session, Schemas.getFixer(), Registries.BLOCK);
+		} finally {
+			try (var walk = Files.walk(dir)) {
+				walk.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
+			}
 		}
 	}
 }

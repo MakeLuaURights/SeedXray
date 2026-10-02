@@ -42,7 +42,7 @@ public final class SeedFinder {
 			SeedXray.predictor.reset();
 			return;
 		}
-		if (state.hasHash && state.hashedSeed == hashedSeed && (state.known() || state.status == SeedState.Status.SEARCHING)) {
+		if (state.hasHash && state.hashedSeed == hashedSeed && state.status != SeedState.Status.UNKNOWN) {
 			return; // same world again (respawn / dimension change)
 		}
 		generation++;
@@ -104,6 +104,7 @@ public final class SeedFinder {
 					state.progress = "";
 					Chat.warn("Seed not found automatically (it is not a small number or a common word).");
 					Chat.warn("If you know it, type /seedxray seed <seed>. It is checked against the server's hash.");
+					Chat.warn("(Some servers scramble that hash; then /seedxray seed <seed> force skips the check.)");
 				}
 			});
 		}, "SeedXray-seed-search");
