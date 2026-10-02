@@ -1,0 +1,13 @@
+accessWidener v2 named
+accessible field net/minecraft/world/gen/chunk/ChunkGenerator indexedFeaturesListSupplier Ljava/util/function/Supplier;
+accessible field net/minecraft/world/gen/placementmodifier/CountPlacementModifier count Lnet/minecraft/util/math/intprovider/IntProvider;
+accessible field net/minecraft/world/gen/placementmodifier/HeightRangePlacementModifier height Lnet/minecraft/world/gen/heightprovider/HeightProvider;
+accessible field net/minecraft/world/gen/placementmodifier/RarityFilterPlacementModifier chance I
+accessible method net/minecraft/structure/StructurePiece applyXTransform (II)I
+accessible method net/minecraft/structure/StructurePiece applyYTransform (I)I
+accessible method net/minecraft/structure/StructurePiece applyZTransform (II)I
+accessible field net/minecraft/structure/SimpleStructurePiece templateIdString Ljava/lang/String;
+accessible field net/minecraft/world/gen/chunk/NoiseChunkGenerator fluidLevelSampler Ljava/util/function/Supplier;
+accessible field net/minecraft/world/chunk/Chunk chunkNoiseSampler Lnet/minecraft/world/gen/chunk/ChunkNoiseSampler;
+accessible class net/minecraft/world/gen/densityfunction/DensityFunctionTypes$Beardifier
+accessible field net/minecraft/world/gen/densityfunction/DensityFunctionTypes$Beardifier INSTANCE Lnet/minecraft/world/gen/densityfunction/DensityFunctionTypes$Beardifier;

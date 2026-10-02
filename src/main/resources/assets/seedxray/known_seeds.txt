@@ -1,0 +1,4 @@
+# Seeds the search tries first, one per line (a number, or text for a text seed).
+# You can add your own in config/seedxray_seeds.txt - a wrong guess here is harmless: every
+# candidate is checked against the hash the server sends, so only the real seed is ever accepted.
+-4172144997902289642 # 2b2t

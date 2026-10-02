@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "seedxray",
+  "version": "${version}",
+  "name": "SeedXray",
+  "description": "Seed-based X-ray: finds the world seed, then highlights structures and ores predicted from it.",
+  "authors": ["SeedXray"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["dev.seedxray.SeedXrayClient"] },
+  "mixins": ["seedxray.mixins.json"],
+  "depends": { "fabricloader": ">=0.16.0", "minecraft": "~1.21.11", "java": ">=21", "fabric-api": "*" }
+}
