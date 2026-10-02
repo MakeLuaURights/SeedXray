@@ -2,6 +2,7 @@ package dev.seedxray.seed;
 
 import dev.seedxray.SeedXray;
 import dev.seedxray.core.Chat;
+import dev.seedxray.crack.CrackController;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public final class SeedFinder {
 		state.hasHash = true;
 		state.hashedSeed = hashedSeed;
 		SeedXray.predictor.reset();
+		CrackController.INSTANCE.reset();
 
 		String key = serverKey(client);
 		Long saved = SeedXray.config.knownSeeds.get(key);
@@ -64,10 +66,24 @@ public final class SeedFinder {
 		}
 	}
 
+	/** The structure cracker worked the seed out (already checked against the server's hash). */
+	public static void onCracked(long seed) {
+		MinecraftClient client = MinecraftClient.getInstance();
+		client.execute(() -> {
+			generation++;
+			found(seed, SeedState.Status.VERIFIED, "worked out from structures");
+			if (client.getServer() == null) {
+				SeedXray.config.knownSeeds.put(serverKey(client), seed);
+				SeedXray.config.save();
+			}
+		});
+	}
+
 	public static void onDisconnect() {
 		generation++;
 		SeedXray.seed.reset();
 		SeedXray.predictor.reset();
+		CrackController.INSTANCE.reset();
 	}
 
 	/** (Re)starts the background search for the current server's hashed seed. */
@@ -144,7 +160,9 @@ public final class SeedFinder {
 		state.seed = seed;
 		state.status = status;
 		state.progress = "";
+		state.crack = "";
 		SeedXray.predictor.reset();
+		CrackController.INSTANCE.reset();
 		Chat.seedFound(seed, how);
 	}
 

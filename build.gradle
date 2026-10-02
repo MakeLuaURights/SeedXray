@@ -58,7 +58,10 @@ java {
 }
 
 test {
-	useJUnitPlatform()
+	useJUnitPlatform {
+		// ./gradlew test -Pslow also runs the brute force tests (about a minute)
+		if (!project.hasProperty('slow')) excludeTags 'slow'
+	}
 	testLogging.showStandardStreams = false
 	System.properties.each { k, v -> if (k.toString().startsWith('seedxray.')) systemProperty k.toString(), v }
 }

@@ -24,6 +24,8 @@ public final class SeedState {
 	public volatile long hashedSeed;
 	/** Human readable progress of the search, for the menu. */
 	public volatile String progress = "";
+	/** What the structure based cracker is doing, for the menu and the HUD. */
+	public volatile String crack = "";
 
 	public boolean known() {
 		Status s = status;
@@ -36,5 +38,6 @@ public final class SeedState {
 		hasHash = false;
 		hashedSeed = 0;
 		progress = "";
+		crack = "";
 	}
 }

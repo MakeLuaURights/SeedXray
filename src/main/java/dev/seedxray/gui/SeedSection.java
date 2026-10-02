@@ -1,6 +1,7 @@
 package dev.seedxray.gui;
 
 import dev.seedxray.SeedXray;
+import dev.seedxray.crack.CrackController;
 import dev.seedxray.seed.SeedFinder;
 import dev.seedxray.seed.SeedState;
 import net.minecraft.client.MinecraftClient;
@@ -103,8 +104,16 @@ final class SeedSection extends Section {
 		search.render(c, mx, my);
 		forget.render(c, mx, my);
 		int ty = y + 108;
-		for (var line : f.wrapLines(Text.literal("A server only sends a hash of its seed, so it cannot be read directly. "
-			+ "The mod tries small numbers and common words; a typed seed is checked against the hash."), w - 4)) {
+		String help;
+		if (s.hasHash && !s.known() && SeedXray.config.crackFromStructures) {
+			var cc = CrackController.INSTANCE;
+			help = "Cracker: " + (s.crack.isEmpty() ? cc.summary() + " - " + cc.needLine() : s.crack)
+				+ ". Explore: it watches for temples, igloos, huts, monuments, buried treasure, End cities and the End pillars.";
+		} else {
+			help = "A server only sends a hash of its seed, so it cannot be read directly. "
+				+ "The mod tries small numbers and common words; a typed seed is checked against the hash.";
+		}
+		for (var line : f.wrapLines(Text.literal(help), w - 4)) {
 			if (ty > y + h - 8) break;
 			c.drawText(f, line, x + 2, ty, 0xFF606060, false);
 			ty += 10;

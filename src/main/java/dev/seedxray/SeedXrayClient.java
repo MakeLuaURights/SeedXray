@@ -2,6 +2,7 @@ package dev.seedxray;
 
 import com.mojang.logging.LogUtils;
 import dev.seedxray.command.SxCommands;
+import dev.seedxray.crack.CrackController;
 import dev.seedxray.config.SxConfig;
 import dev.seedxray.gui.MenuScreen;
 import dev.seedxray.render.Esp;
@@ -10,6 +11,7 @@ import dev.seedxray.render.HudRenderer;
 import dev.seedxray.seed.SeedFinder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -46,12 +48,17 @@ public class SeedXrayClient implements ClientModInitializer {
 				SeedXray.config.save();
 			}
 			Esp.controller.tick(client);
+			CrackController.INSTANCE.tick(client);
 		});
 		// The server puts the hashed seed in its join/respawn packets; the client keeps it as the world's biome seed.
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (client.world != null) SeedFinder.onJoin(client, client.world.getBiomeAccess().seed);
 		});
-		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> SeedFinder.onJoin(client, world.getBiomeAccess().seed));
+		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> {
+			CrackController.INSTANCE.worldChanged();
+			SeedFinder.onJoin(client, world.getBiomeAccess().seed);
+		});
+		ClientChunkEvents.CHUNK_LOAD.register(CrackController.INSTANCE::onChunkLoad);
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			SeedFinder.onDisconnect();
 			Esp.controller.clear();

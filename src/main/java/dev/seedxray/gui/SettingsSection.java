@@ -168,6 +168,7 @@ final class SettingsSection extends Section {
 			SeedXray.selectionChanged();
 		}));
 		rows.add(new Toggle("Select deepslate twins too", () -> c.linkDeepslate, v -> c.linkDeepslate = v));
+		rows.add(new Toggle("Work the seed out from structures", () -> c.crackFromStructures, v -> c.crackFromStructures = v));
 		rows.add(new Toggle("Low-end mode (lighter)", () -> c.lowEnd, v -> {
 			c.applyLowEnd(v);
 			c.lowEnd = v;

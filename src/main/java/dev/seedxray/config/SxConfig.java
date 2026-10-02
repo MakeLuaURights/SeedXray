@@ -68,6 +68,8 @@ public final class SxConfig {
 
 	// --- seed finding
 	public boolean autoSeedSearch = true;
+	/** Collect structures and End pillars while exploring to work the seed out (like SeedcrackerX). */
+	public boolean crackFromStructures = true;
 	/** The seed search tries every number in [-range, range]. */
 	public int seedSearchRange = 30_000_000;
 	/** Seeds typed by the user / found earlier, per server address. */

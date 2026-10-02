@@ -51,6 +51,12 @@ public final class HudRenderer {
 			context.fill(x - 3, y - 3, x + w + 3, y + 11, 0x80000000);
 			context.drawText(font, line, x, y, 0xFFFFFFFF, true);
 			y += 16;
+			if (SeedXray.seed.hasHash && !SeedXray.seed.known() && SeedXray.config.crackFromStructures) {
+				var cc = dev.seedxray.crack.CrackController.INSTANCE;
+				String crack = SeedXray.seed.crack.isEmpty() ? cc.summary() + " - " + cc.needLine() : SeedXray.seed.crack;
+				context.drawText(font, font.trimToWidth("Cracker: " + crack, 360), x, y, 0xFFFFD27F, true);
+				y += 12;
+			}
 			String status = SeedXray.predictor.status();
 			if (!status.isEmpty()) {
 				context.drawText(font, status, x, y, 0xFFAAAAAA, true);

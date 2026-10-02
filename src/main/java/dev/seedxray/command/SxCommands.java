@@ -7,6 +7,7 @@ import dev.seedxray.SeedXray;
 import dev.seedxray.SeedXrayClient;
 import dev.seedxray.core.Chat;
 import dev.seedxray.core.Marker;
+import dev.seedxray.crack.CrackController;
 import dev.seedxray.core.StructureSnapshot;
 import dev.seedxray.seed.SeedFinder;
 import dev.seedxray.seed.SeedState;
@@ -51,6 +52,17 @@ public final class SxCommands {
 				SeedFinder.startSearch(MinecraftClient.getInstance());
 				return 1;
 			}))
+			.then(ClientCommandManager.literal("crack")
+				.executes(ctx -> {
+					var cc = CrackController.INSTANCE;
+					Chat.info("Cracker: " + cc.summary() + " - " + cc.needLine() + (SeedXray.seed.crack.isEmpty() ? "" : " | " + SeedXray.seed.crack));
+					return 1;
+				})
+				.then(ClientCommandManager.literal("clear").executes(ctx -> {
+					CrackController.INSTANCE.reset();
+					Chat.info("Cracker data cleared.");
+					return 1;
+				})))
 			.then(ClientCommandManager.literal("where").executes(ctx -> {
 				where();
 				return 1;

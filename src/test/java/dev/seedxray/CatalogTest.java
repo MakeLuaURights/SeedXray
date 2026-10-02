@@ -2,6 +2,7 @@ package dev.seedxray;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import dev.seedxray.crack.*;
 import dev.seedxray.sim.*;
 import java.util.*;
 import net.minecraft.registry.RegistryKeys;
@@ -27,6 +28,10 @@ public class CatalogTest {
 			DimensionSim sim = new DimensionSim(e.dim(), 1L);
 			boolean inDim = structure.getValidBiomes().stream().anyMatch(sim.biomeSource.getBiomes()::contains);
 			assertTrue(inDim, e.id() + " is not generated in " + e.dim());
+		}
+		for (Kind kind : Kind.values()) {
+			assertTrue(real.contains(kind.structureId), "cracker kind " + kind + " uses unknown structure " + kind.structureId);
+			Placement.of(kind); // must be a random spread placement
 		}
 		Set<String> missing = new TreeSet<>(real);
 		missing.removeAll(catalog);
